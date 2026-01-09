@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: AGPL-3.0-or-later
 set -euo pipefail
-source "$(dirname "${BASH_SOURCE[0]}")/../lib/utils.bash"
-check_dependencies
-[[ -z "${ASDF_INSTALL_VERSION:-}" ]] && fail "VERSION required"
-[[ -z "${ASDF_INSTALL_PATH:-}" ]] && fail "PATH required"
-dp="${ASDF_DOWNLOAD_PATH:-${ASDF_INSTALL_PATH}/tmp}"
-[[ ! -f "${dp}/grype" ]] && { mkdir -p "${dp}"; download_file "$(get_download_url "${ASDF_INSTALL_VERSION}")" "${dp}/grype.tar.gz"; tar -xzf "${dp}/grype.tar.gz" -C "${dp}"; rm "${dp}/grype.tar.gz"; }
-mkdir -p "${ASDF_INSTALL_PATH}/bin"
-cp "${dp}/grype" "${ASDF_INSTALL_PATH}/bin/"
-chmod +x "${ASDF_INSTALL_PATH}/bin/grype"
-[[ -d "${ASDF_INSTALL_PATH}/tmp" ]] && rm -rf "${ASDF_INSTALL_PATH}/tmp"
-log_info "grype ${ASDF_INSTALL_VERSION} installed"
+
+current_script_path="${BASH_SOURCE[0]}"
+plugin_dir="$(dirname "$(dirname "$current_script_path")")"
+
+# shellcheck source=../lib/utils.bash
+source "$plugin_dir/lib/utils.bash"
+
+install_version "$ASDF_INSTALL_VERSION" "$ASDF_INSTALL_PATH"
